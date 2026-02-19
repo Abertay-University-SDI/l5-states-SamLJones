@@ -47,11 +47,20 @@ void Player::update(float dt)
 
 void Player::collisionResponse(GameObject& collider)
 {
-	m_velocity.y = 0;
-	setPosition({ getPosition().x, collider.getPosition().y - getSize().y + 5});
-	m_isOnGround = true;
 	sf::FloatRect playerCollider = getCollisionBox();
 	sf::FloatRect wallBounds = collider.getCollisionBox();
-	auto overlap = playerCollider.findIntersection(wallBounds);
+	auto overlap = getCollisionBox().findIntersection(collider.getCollisionBox());
 	if (!overlap) return;
+
+	if (overlap->size.x > overlap->size.y)
+	{
+		m_isOnGround = true;
+		m_velocity.y = 0;
+		setPosition({ getPosition().x, collider.getPosition().y - getCollisionBox().size.y });
+	}
+	else if (overlap->size.y > overlap->size.x)
+	{
+		
+	}
 }
+
