@@ -23,6 +23,13 @@ void Player::handleInput(float dt)
 	if (m_input->isKeyDown(sf::Keyboard::Scancode::D))
 		m_acceleration.x += SPEED;
 
+	if (m_input->isKeyDown(sf::Keyboard::Scancode::W) && m_isOnGround)
+	{
+		m_acceleration.y -= JUMP_FORCE;
+		m_isOnGround = false;
+		//std::cout << "Jump!" << std::endl;
+	}
+
 	if (m_input->isKeyDown(sf::Keyboard::Scancode::R))	// Reset (for debugging)
 	{
 		setPosition({ 50,0 });
@@ -40,5 +47,11 @@ void Player::update(float dt)
 
 void Player::collisionResponse(GameObject& collider)
 {
-	
+	m_velocity.y = 0;
+	setPosition({ getPosition().x, collider.getPosition().y - getSize().y + 5});
+	m_isOnGround = true;
+	sf::FloatRect playerCollider = getCollisionBox();
+	sf::FloatRect wallBounds = collider.getCollisionBox();
+	auto overlap = playerCollider.findIntersection(wallBounds);
+	if (!overlap) return;
 }
